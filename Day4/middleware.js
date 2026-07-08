@@ -15,6 +15,16 @@ function logger(req, res, next) {
 
 app.use(logger)
 
+function checkAuth(req, res, next) {
+    const isLoggedIn = true;
+    if (isLoggedIn) {
+        next();
+    } else {
+        res.status(401).send("Not logged in ")
+    }
+}
+
+
 app.post('/students', (req, res) => {
     const newStudent = req.body
     students.push(newStudent)
@@ -30,7 +40,7 @@ app.get('/students/:id', (req, res) => {
     res.json(filteredStudent)
 })
 
-app.delete('/students/:id', (req, res) => {
+app.delete('/students/:id', checkAuth, (req, res) => {
     students = students.filter((student) => student.id != req.params.id)
     res.json({ message: "Student Deleted" })
 })
