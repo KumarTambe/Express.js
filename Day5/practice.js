@@ -35,11 +35,17 @@ app.get('/books', (req, res) => {
 
 app.get('/books/:id', (req, res) => {
     const book = books.find((book) => book.id == req.params.id)
-    res.json(book)
+    if (!book) {
+        return res.status(404).json({ message: "Book not found" })
+    }
+    res.status(200).json(book)
 })
 
 app.post('/books', (req, res) => {
     const newBook = req.body
+    if (!req.body.title) {
+        return res.status(400).json({ message: "Enter title pls" })
+    }
     books.push(newBook)
     res.status(201).json({ message: "book added successfully" })
 })
@@ -55,9 +61,21 @@ app.put('/books/:id', (req, res) => {
 })
 
 app.delete('/books/:id', checkAuth, (req, res) => {
-    books = books.filter((book) => book.id != req.params.id)
+    const book = books.find((book) => book.id == req.params.id)
+    if (!book) {
+        return res.status(404).json({ message: "Book not found" })
+    } else {
+        books = books.filter((book) => book.id != req.params.id)
+    }
     res.json({ message: "Book deleted successfully" })
 })
+
+function errorHandler(err, req, res, next) {
+    console.log(err)
+    res.status(500).json({ message: "something went wrong !" })
+}
+
+app.use(errorHandler)
 
 app.listen(3000, () => {
     console.log("server started at port 3000")
