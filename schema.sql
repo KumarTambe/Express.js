@@ -41,3 +41,30 @@ DELETE FROM students WHERE age < 22;
 -- Confirm final state
 SELECT * FROM students ORDER BY age DESC;
 
+-- ============================================
+-- SESSION 3: Aggregations + JOINs
+-- ============================================
+
+-- Aggregate functions
+SELECT COUNT(*) FROM students;
+SELECT AVG(age) FROM students;
+
+-- Related tables for JOIN practice
+CREATE TABLE courses (
+    id SERIAL PRIMARY KEY,
+    course_name VARCHAR(100)
+);
+
+CREATE TABLE enrollments (
+    id SERIAL PRIMARY KEY,
+    student_id INT REFERENCES students(id),
+    course_id INT REFERENCES courses(id)
+);
+
+-- Example INNER JOIN across 3 tables
+SELECT students.name, courses.course_name
+FROM enrollments
+INNER JOIN students ON enrollments.student_id = students.id
+INNER JOIN courses ON enrollments.course_id = courses.id;
+
+-- (More Session 3 queries — GROUP BY, HAVING, LEFT/RIGHT/FULL JOIN — to be added below as practiced)
