@@ -68,3 +68,31 @@ INNER JOIN students ON enrollments.student_id = students.id
 INNER JOIN courses ON enrollments.course_id = courses.id;
 
 -- (More Session 3 queries — GROUP BY, HAVING, LEFT/RIGHT/FULL JOIN — to be added below as practiced)
+-- Insert enrollment data (Kumar takes both courses, Anish takes DSA, Ranveer takes none)
+INSERT INTO enrollments (student_id, course_id) VALUES (1, 1);
+INSERT INTO enrollments (student_id, course_id) VALUES (2, 1);
+INSERT INTO enrollments (student_id, course_id) VALUES (1, 2);
+
+-- Challenge 1: INNER JOIN — only shows enrolled students, excludes Ranveer
+SELECT students.name, courses.course_name
+FROM enrollments
+INNER JOIN students ON enrollments.student_id = students.id
+INNER JOIN courses ON enrollments.course_id = courses.id;
+
+-- Challenge 2: LEFT JOIN — includes every student, Ranveer shows NULL for enrollment columns
+SELECT *
+FROM students
+LEFT JOIN enrollments ON students.id = enrollments.student_id;
+
+-- Challenge 3: GROUP BY + COUNT — number of students enrolled per course_id
+SELECT course_id, COUNT(*) FROM enrollments GROUP BY course_id;
+
+-- Mega Challenge: JOIN + GROUP BY together — course name with enrollment count
+SELECT courses.course_name, COUNT(*)
+FROM enrollments
+INNER JOIN courses ON enrollments.course_id = courses.id
+GROUP BY courses.course_name;
+
+-- Key takeaway: enrollments is a bridge/junction table connecting students <-> courses
+-- in a many-to-many relationship. Neither students nor courses can hold a foreign key
+-- to the other directly, since one student can take many courses and vice versa.
