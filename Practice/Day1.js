@@ -1,3 +1,5 @@
+// basic routes and syntax
+
 import express from 'express'
 
 const app = express();

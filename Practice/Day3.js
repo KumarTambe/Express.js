@@ -1,3 +1,5 @@
+// types of req and res and post,put,patch,delete
+
 import express from 'express'
 
 const app = express();

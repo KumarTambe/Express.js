@@ -1,3 +1,5 @@
+// types of req.params and req.query
+
 import express from 'express';
 
 const app = express();
