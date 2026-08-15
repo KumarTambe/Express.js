@@ -1,59 +1,52 @@
-const express = require("express");
+import express from 'express'
 const app = express();
 
 app.use(express.json());
 
 let dishes = [
-    { id: "1", name: "Pizza" },
-    { id: "2", name: "Burger" }
-];
+    { id: 1, name: "Vada Pav", category: "snacks", price: 20, available: true },
+    { id: 2, name: "Masala Chai", category: "beverages", price: 15, available: true }
+]
 
 let reviews = [
-    { id: "1", dishId: "1", text: "Really good!", rating: 5 },
-    { id: "2", dishId: "1", text: "Pretty decent", rating: 4 }
-];
+    { id: 1, dishId: 1, text: "Best on campus", rating: 5 },
+    { id: 2, dishId: 1, text: "Bit oily today", rating: 3 },
+    { id: 3, dishId: 2, text: "Too sweet", rating: 2 }
+]
 
-app.get("/dishes/:dishId/reviews", (req, res) => {
-    const { dishId } = req.params;
-    const dish = dishes.find(dish => dish.id === dishId);
+app.get('/dishes/:dishId/reviews', (req, res) => {
+    const dish = dishes.find((d) => d.id == req.params.dishId)
     if (!dish) {
-        return res.status(404).json({
-            message: "Dish not found"
-        });
+        res.status(404).json({ message: "Dish not found" })
+    } else {
+        const dishReview = reviews.filter((r) => r.dishId == req.params.dishId)
+        if (dishReview.length == 0) {
+            res.status(200).json({ count: 0 })
+        } else {
+            res.status(200).json(dishReview)
+        }
     }
-    const dishReviews = reviews.filter(
-        review => review.dishId === dishId
-    );
+})
 
-    return res.status(200).json({
-        count: dishReviews.length,
-        reviews: dishReviews
-    });
-});
-
-app.post("/dishes/:dishId/reviews", (req, res) => {
-    const { dishId } = req.params;
-    const { text, rating } = req.body;
-    const dish = dishes.find(dish => dish.id === dishId);
+app.post('/dishes/:dishId/reviews', (req, res) => {
+    const dish = dishes.find(d => d.id == req.params.dishId)
     if (!dish) {
-        return res.status(404).json({
-            message: "Dish not found"
-        });
+        return res.status(404).json({ message: "Dish not found" })
+    } else {
+        if (!req.body.text || !req.body.rating) {
+            res.status(400).json({ message: "Incomplete data" })
+        } else {
+            const newReview = {
+                id: reviews.length + 1,
+                dishId: Number(req.params.dishId),
+                text: req.body.text,
+                rating: req.body.rating
+            }
+            reviews.push(newReview)
+            res.status(200).json({ message: "Done" })
+        }
     }
-    if (!text || rating === undefined) {
-        return res.status(400).json({
-            message: "text and rating are required"
-        });
-    }
-    const newReview = {
-        id: String(reviews.length + 1),
-        dishId: dishId,
-        text,
-        rating
-    };
-    reviews.push(newReview);
-    return res.status(201).json(newReview);
-});
+})
 
 
 app.listen(3000, () => {
