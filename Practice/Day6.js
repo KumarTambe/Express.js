@@ -54,10 +54,13 @@ app.get('/crash', (req, res) => {
     throw new Error("On purpose")
 })
 
-app.get('/asyncboom', async (req, res, next) => {
-
-    await Promise.reject(new Error("Async failure"))
-
+app.get('/dishes', async (req, res, next) => {
+    try {
+        const result = await db.query('SELECT * FROM dishes')
+        res.json(result.rows)
+    } catch (err) {
+        next(err)
+    }
 })
 
 app.use((req, res) => {
