@@ -45,9 +45,23 @@ app.post('/dishes/:dishId/reviews', (req, res) => {
                 rating: req.body.rating
             }
             reviews.push(newReview)
-            res.status(200).json({ message: "Done" })
+            res.status(201).json({ message: "Done" })
         }
     }
+})
+
+app.get('/crash', (req, res) => {
+    throw new Error("On purpose")
+})
+
+app.get('/asyncboom', async (req, res, next) => {
+
+    await Promise.reject(new Error("Async failure"))
+
+})
+
+app.use((req, res) => {
+    res.status(404).json({ message: "Route note found" })
 })
 
 app.use((err, req, res, next) => {
